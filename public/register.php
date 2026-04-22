@@ -7,7 +7,16 @@
 
 <body>
 
-
+<?php
+if(isset($_GET['error'])){
+    if($_GET['error']=="empty"){
+        echo "<p style='color:red'>Tous les champs sont obligatoires</p>";
+    }
+    if($_GET['error']=="email"){
+        echo "<p style='color:red'>Email invalide</p>";
+    }
+}
+?>
 
 <form action="../scripts/authprocess.php" method="POST" novalidate>
 

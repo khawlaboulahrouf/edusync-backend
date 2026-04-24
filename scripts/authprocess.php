@@ -1,54 +1,50 @@
 <?php
-session_start();
+require("../includes/db.php");
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if (isset($_POST['register'])){
+    $nom = htmlspecialchars($_POST['nom']);
+    $prenom = htmlspecialchars($_POST['prenom']);
+    $email = htmlspecialchars($_POST['email']);
+    $password = htmlspecialchars($_POST['password']);
 
-    $action = $_POST['action'] ?? '';
-
-    /* ================= REGISTER ================= */
-    if($action == "register"){
-
-        $nom = $_POST['nom'] ?? '';
-        $prenom = $_POST['prenom'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        if(empty($nom) || empty($prenom) || empty($email) || empty($password)){
-            header("Location: ../public/register.php?error=empty");
-            exit();
-        }
-
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            header("Location: ../public/register.php?error=email");
-            exit();
-        }
-
-        echo "Inscription réussie";
+    if($nom == "" || $prenom == "" || $email == "" || $password == ""){
+        header("Location:../public/register.php?error=empty");
+        exit();
+    }
+    if(!filter_var($email , FILTER_VALIDATE_EMAIL)){
+        header("Location:../public/register.php?error=email");
+        exit();
     }
 
-    /* ================= LOGIN ================= */
-    if($action == "login"){
+    $password = password_hash($password , PASSWORD_DEFAULT);
+    $sql ="INSERT INTO users (firstname , lastname , email , pasword ,role_id)
+    VALUES(:nom , :prenom , :email , :password , :role_id)";
+    $stmt = $conn -> prepare($sql);
+    $stmt ->execute(['nom'=>$nom , 'prenom'=>$prenom , 'email'=>$email , 'password'=>$password , 'role_id'=>2]);
+    header("Location:../public/login.php");
+    exit();
 
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+}
 
-        $testEmail = "test@gmail.com";
-        $testPassword = "1234";
+if(isset($_POST['login'])){
 
-        if($email == $testEmail && $password == $testPassword){
-
-            $_SESSION['user'] = [
-                "nom" => "Test User",
-                "role" => "admin",
-                "email" => $email
-            ];
-
-            header("Location: ../public/dashboard.php");
+   $email = htmlspecialchars($_POST['email']);
+    $password = htmlspecialchars($_POST['password']);
+    if(!empty($email)&& !empty($password)){
+        $sql=$conn->prepare('select*from users where email=?');
+        $sql->execute([$email]);
+        $user=$sql-> fetch();
+        if($user && password_verify($password,$user['pasword'])){
+        session_start(); 
+        // echo 'hi';   
+        // $_SESSION['email'] = "email@gmail.com";
+            $_SESSION['firstname'] = $user['firstname'];
+            header("location: ../public/dashboard.php");
             exit();
-
         }else{
-            header("Location: ../public/login.php?error=1");
-            exit();
+            header("location : login.php?error='Invalid email or password'");
         }
+    }else{
+        $message = "fill";
     }
 }

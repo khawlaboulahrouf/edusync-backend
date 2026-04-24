@@ -36,7 +36,7 @@
                 <input type="password" name="password" class="w-full p-2 border rounded">
             </div>
 
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">
+            <button type="submit" name='login' class="w-full bg-blue-600 text-white p-2 rounded">
                 Se connecter
             </button>
 

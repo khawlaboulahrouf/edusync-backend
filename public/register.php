@@ -52,7 +52,7 @@
             </div>
 
             <!-- Button -->
-            <button type="submit"
+            <button type="submit" name="register"
                 class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
                 S'inscrire
             </button>
